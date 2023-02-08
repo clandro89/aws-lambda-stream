@@ -1,6 +1,5 @@
 import base64
 import json
-from decimal import Decimal
 import pydash
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
 
@@ -18,7 +17,7 @@ def from_kinesis(event):
             **uow,
             'event': {
                 'id': uow['record']['eventID'],
-                **json.loads(uow['event'], parse_float=Decimal)
+                **json.loads(uow['event'])
             },
         }
     ).value()

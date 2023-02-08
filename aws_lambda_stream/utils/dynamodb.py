@@ -1,4 +1,6 @@
 import os
+import json
+from decimal import Decimal
 from typing import Union
 from functools import reduce
 import boto3
@@ -7,6 +9,7 @@ from reactivex import Observable
 from aws_lambda_stream.connectors.dynamodb import Connector
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.operators import rx_map
+from aws_lambda_stream.utils.json_encoder import JSONEncoder
 
 
 def serialize_number(number: str) -> Union[float, int]:
@@ -93,7 +96,13 @@ def update_dynamodb(
         return {
             **uow,
             'update_response': connector.update(
-                uow[update_request_field]
+                json.loads(
+                    json.dumps(
+                        uow[update_request_field],
+                        cls=JSONEncoder
+                    ),
+                    parse_float=Decimal
+                )
             )
         }
     return faulty(wrapper)
@@ -108,7 +117,13 @@ def put_dynamodb(
         return {
             **uow,
             'put_response': connector.put(
-                uow[put_request_field]
+                json.loads(
+                    json.dumps(
+                        uow[put_request_field],
+                        cls=JSONEncoder
+                    ),
+                    parse_float=Decimal
+                )
             )
         }
     return faulty(wrapper)
