@@ -86,7 +86,6 @@ RULES = [
 ]
 
 def test_should_execute_simple_rules(monkeypatch):
-    print("-----")
     events = to_dynamodb_records([
         {
             "timestamp": 1548967023,
