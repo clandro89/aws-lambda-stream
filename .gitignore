@@ -1,0 +1,29 @@
+# Distribution / packaging
+.Python
+__pycache__/
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv
+venv
+.mypy_cache
+.coverage
+
+# IDEs
+.vscode/
+.idea/
+
+.DS_Store
