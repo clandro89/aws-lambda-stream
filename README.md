@@ -1,6 +1,6 @@
 # aws-lambda-stream
 
-This a python version of [aws-lambda-stream](https://github.com/jgilbert01/aws-lambda-stream)
+This a python version of [aws-lambda-stream](https://github.com/jgilbert01/aws-lambda-stream) using [ReactiveX](https://github.com/ReactiveX/RxPY)
 
 
 ## Installation
