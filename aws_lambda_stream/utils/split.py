@@ -1,7 +1,7 @@
-from reactivex import Observable, operators as ops, from_list
+from reactivex import Observable
 from pydash import get
 from aws_lambda_stream.utils.faults import faulty
-from aws_lambda_stream.utils.operators import rx_map
+from aws_lambda_stream.utils.operators import rx_map, split_buffer
 
 
 def split_object(rule):
@@ -11,10 +11,9 @@ def split_object(rule):
 
         if split_on:
             if callable(split_on):
-                _split = lambda uow: {'aux': split_on(uow, rule)}
+                _split = lambda uow: split_on(uow, rule)
             else:
-                _split = lambda uow: {
-                    'aux': list(
+                _split = lambda uow: list(
                         map(
                             lambda v: {
                                 **uow,
@@ -22,12 +21,11 @@ def split_object(rule):
                             },
                             get(uow, split_on, [])
                         )
-                    ),
-                }
+                    )
 
             return source.pipe(
                 rx_map(faulty(_split)),
-                ops.flat_map(lambda uow: from_list(uow['aux']))# pylint: disable=E1102
+                split_buffer()
             )
 
         return source

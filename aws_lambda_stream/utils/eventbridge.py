@@ -1,9 +1,10 @@
 import os
 import json
-from reactivex import Observable, operators as ops, from_list
+from reactivex import Observable, operators as ops
 from aws_lambda_stream.connectors.eventbridge import Connector
 from aws_lambda_stream.utils.concurrency import OPTIMAL_THREAD_COUNT
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
+from aws_lambda_stream.utils.operators import split_buffer
 from .tags import adorn_standard_tags
 from .batch import to_batch_uow, unbatch_uow
 
@@ -53,6 +54,6 @@ def publish_to_event_bridge(
             ops.map(to_input_params),
             ops.map(put_events),
             ops.map(unbatch_uow),
-            ops.flat_map(from_list)
+            split_buffer()
         )
     return wrapper

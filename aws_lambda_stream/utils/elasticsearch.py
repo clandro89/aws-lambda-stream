@@ -1,8 +1,9 @@
 import os
 import json
-from reactivex import Observable, operators as ops, from_list
+from reactivex import Observable, operators as ops
 from aws_lambda_stream.connectors.elasticsearch import Connector
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
+from aws_lambda_stream.utils.operators import split_buffer
 from .batch import to_batch_uow, unbatch_uow
 
 
@@ -43,6 +44,6 @@ def update_elasticsearch(
             ops.map(to_input_params),
             ops.map(put_items),
             ops.map(unbatch_uow),
-            ops.flat_map(from_list)
+            split_buffer()
         )
     return wrapper

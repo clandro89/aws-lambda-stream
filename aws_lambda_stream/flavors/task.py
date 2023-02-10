@@ -1,9 +1,9 @@
 from uuid import uuid1
-from reactivex import Observable, from_list, operators as ops
+from reactivex import Observable
 from pydash import pick, get, set_
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
-from aws_lambda_stream.utils.operators import rx_filter, rx_map
+from aws_lambda_stream.utils.operators import rx_filter, rx_map, split_buffer
 from aws_lambda_stream.utils.time import now
 
 
@@ -45,7 +45,7 @@ def _to_event(rule):
         if get(rule, 'emit'):
             return source.pipe(
                 rx_map(_to_emit(rule)),
-                ops.flat_map(from_list),
+                split_buffer(),
                 rule['publish']({
                         **pick(rule,[
                             'logger',
