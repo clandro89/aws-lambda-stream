@@ -1,10 +1,10 @@
 from functools import reduce
-from reactivex import Observable, from_list, operators as ops
+from reactivex import Observable
 from pydash import get, pick, omit, merge
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
 from aws_lambda_stream.utils.dynamodb import query_dynamodb
-from aws_lambda_stream.utils.operators import rx_filter, rx_map
+from aws_lambda_stream.utils.operators import rx_filter, rx_map, split_buffer
 
 
 def evaluate(rule):
@@ -32,7 +32,7 @@ def evaluate(rule):
             rx_filter(on_content(rule)),
             _complex(rule),
             rx_map(_to_higher_order_events(rule)),
-            ops.flat_map(from_list),
+            split_buffer(),
             rule['publish']({
                     **pick(rule,[
                         'logger',
