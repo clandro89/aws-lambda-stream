@@ -1,3 +1,4 @@
+import os
 from uuid import uuid4
 from datetime import datetime
 from aws_lambda_stream import (now, ttl, update_expression, timestamp_condition)
@@ -29,6 +30,7 @@ class BaseEntityRepository():
                     'deleted': None,
                     'latched': None,
                     'ttl': ttl(timestamp, 33),
+                    'awsregion': os.getenv('REGION'),
                     **{k: v for k, v in input_params.items() if k not in ['pk', 'sk']},
                     'timestamp': timestamp,
                 },
@@ -54,6 +56,7 @@ class BaseEntityRepository():
                     'deleted': True,
                     'latched': False,
                     'ttl': ttl(timestamp, 33),
+                    'awsregion': os.getenv('REGION'),
                     'timestamp': timestamp,
                 },
             ),
