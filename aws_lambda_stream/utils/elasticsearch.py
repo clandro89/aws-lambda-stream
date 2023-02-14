@@ -3,7 +3,8 @@ import json
 from reactivex import Observable, operators as ops
 from aws_lambda_stream.connectors.elasticsearch import Connector
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
-from aws_lambda_stream.utils.operators import split_buffer
+from aws_lambda_stream.utils.operators import split_buffer, rx_map
+from aws_lambda_stream.utils.faults import faulty
 from .batch import to_batch_uow, unbatch_uow
 
 
@@ -40,10 +41,10 @@ def update_elasticsearch(
     def wrapper(source: Observable):
         return source.pipe(
             ops.buffer_with_count(max_batch_size if batch_size > max_batch_size else batch_size),
-            ops.map(to_batch_uow),
-            ops.map(to_input_params),
-            ops.map(put_items),
-            ops.map(unbatch_uow),
+            rx_map(to_batch_uow),
+            rx_map(to_input_params),
+            rx_map(faulty(put_items)),
+            rx_map(unbatch_uow),
             split_buffer()
         )
     return wrapper
