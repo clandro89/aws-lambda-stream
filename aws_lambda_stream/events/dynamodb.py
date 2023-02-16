@@ -15,8 +15,6 @@ def from_dynamodb(
                 event['Records']
             ).filter(
                 _out_replicas
-            ).filter(
-                _out_global_table_extra_modify
             ).map(
                 lambda record: {
                             'record': record,
@@ -89,17 +87,6 @@ def _out_replicas(record):
         pydash.get(record, 'dynamodb.OldImage')
     if 'awsregion' in image:
         return image['awsregion']['S'] == os.getenv('REGION')
-    return True
-
-
-def _out_global_table_extra_modify(record):
-    new_image = pydash.get(record, 'dynamodb.NewImage')
-    old_image = pydash.get(record, 'dynamodb.OldImage')
-
-    if new_image and pydash.get(new_image, 'awsregion') and \
-        old_image and not pydash.get(old_image, 'awsregion'):
-        return False
-
     return True
 
 

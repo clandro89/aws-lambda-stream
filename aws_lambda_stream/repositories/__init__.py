@@ -89,6 +89,7 @@ class BaseEntityRepository():
                     'deleted': True if uow['event']['type'] == f'{entity_name}-deleted' else None,
                     'latched': True,
                     'ttl': ttl(uow['event']['timestamp'], 33),
+                    'awsregion': os.getenv('REGION'),
                 }),
                 **timestamp_condition(),
             }
