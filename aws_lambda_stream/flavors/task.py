@@ -20,24 +20,45 @@ def task(rule):
         'emit': Optional[str | Callable]
     }
     """
+        
     def wrapper(source: Observable):
         return source.pipe(
             rx_filter(on_event_type(rule)),
             rx_filter(on_content(rule)),
-            rx_map(_execute(rule)),
+            _execute(rule),
+            _execute_operators(rule),
             _to_event(rule),
         )
     return wrapper
 
 def _execute(rule):
-    def wrapper(uow):
+    def _call(uow):
         result_key = rule.get('result_key', 'result')
         return set_(
             uow,
             result_key,
             rule['execute'](uow, rule)
         )
-    return faulty(wrapper)
+        
+    def wrapper(source: Observable):
+        execute = get(rule, 'execute')
+        if execute:
+            return source.pipe(
+                rx_map(faulty(_call)),
+            )
+        return source.pipe()
+    return wrapper
+
+
+def _execute_operators(rule):
+    def wrapper(source: Observable):
+        ops = get(rule, 'execute_operators')
+        if ops:
+            return source.pipe(
+                ops(rule)
+            )
+        return source.pipe()
+    return wrapper
 
 
 def _to_event(rule):
