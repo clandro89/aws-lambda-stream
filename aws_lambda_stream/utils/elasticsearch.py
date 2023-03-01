@@ -1,5 +1,6 @@
 import os
 import json
+from pydash import get, pick
 from reactivex import Observable, operators as ops
 from aws_lambda_stream.connectors.elasticsearch import Connector
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
@@ -46,5 +47,35 @@ def update_elasticsearch(
             rx_map(faulty(put_items)),
             rx_map(unbatch_uow),
             split_buffer()
+        )
+    return wrapper
+
+
+def query_elasticsearch(
+    host = os.getenv('ES_DOMAIN_HOST'),
+    region = os.getenv('REGION'),
+    query_request_field = 'query_request',
+    query_response_field = 'query_response'
+    ):
+
+    connector = Connector(host, region)
+
+    def search(uow):
+        if not uow.get(query_request_field):
+            return uow
+
+        return {
+            **uow,
+            query_response_field: connector.search(
+                **pick(
+                    get(uow, query_request_field),
+                    'index', 'payload' ,'query'
+                )
+            )
+        }
+
+    def wrapper(source: Observable):
+        return source.pipe(
+            rx_map(faulty(search)),
         )
     return wrapper

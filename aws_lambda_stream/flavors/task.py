@@ -20,7 +20,7 @@ def task(rule):
         'emit': Optional[str | Callable]
     }
     """
-        
+
     def wrapper(source: Observable):
         return source.pipe(
             rx_filter(on_event_type(rule)),
@@ -39,7 +39,7 @@ def _execute(rule):
             result_key,
             rule['execute'](uow, rule)
         )
-        
+
     def wrapper(source: Observable):
         execute = get(rule, 'execute')
         if execute:
