@@ -78,8 +78,11 @@ def _calculate_event_type_suffix(record):
 
 def _get_timestamp(uow):
     _new = uow['event']['raw']['new']
-    if 'timestamp' in _new:
+    _old = uow['event']['raw']['old']
+    if _new and 'timestamp' in _new:
         return _new['timestamp']
+    if _old and 'timestamp' in _old:
+        return _old['timestamp']
     return int(uow['event']['timestamp'])
 
 def _out_replicas(record):
