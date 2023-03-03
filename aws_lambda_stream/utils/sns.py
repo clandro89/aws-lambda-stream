@@ -1,11 +1,12 @@
 from uuid import uuid1
-from reactivex import Observable, operators as ops
+from reactivex import Observable
 from pydash import map_
 from aws_lambda_stream.connectors.sns import Connector
+from aws_lambda_stream import rx_map, faulty
 
 def publish_to_sns(
     connector: Connector,
-    publish_message_field='sns_payload'
+    publish_message_field='sns_payload',
 ):
     def to_input_params(uow):
         return {
@@ -25,7 +26,7 @@ def publish_to_sns(
         return uow
     def _wrapper(source: Observable):
         return source.pipe(
-            ops.map(to_input_params),
-            ops.map(publish_batch)
+            rx_map(faulty(to_input_params)),
+            rx_map(faulty(publish_batch))
         )
     return _wrapper
