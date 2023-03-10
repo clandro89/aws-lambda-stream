@@ -1,6 +1,7 @@
 import os
 import json
 from reactivex import Observable, operators as ops
+from aws_lambda_powertools import Logger
 from aws_lambda_stream.connectors.eventbridge import Connector
 from aws_lambda_stream.utils.concurrency import OPTIMAL_THREAD_COUNT
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
@@ -11,7 +12,7 @@ from .batch import to_batch_uow, unbatch_uow
 
 # pylint: disable=unused-argument,too-many-arguments
 def publish_to_event_bridge(
-    logger=None,
+    logger=Logger(),
     bus_name=os.getenv('BUS_NAME') or 'undefined',
     source='custom',
     event_field='event',
@@ -20,6 +21,7 @@ def publish_to_event_bridge(
     parallel=os.getenv('PUBLISH_PARALLEL') or os.getenv('PARALLEL') or OPTIMAL_THREAD_COUNT,
     handle_errors=True
 ):
+    
     connector = Connector()
     def to_input_params(batch_uow):
         return {
@@ -42,6 +44,7 @@ def publish_to_event_bridge(
     def put_events(batch_uow):
         if len(batch_uow['input_params']['Entries']) == 0:
             return batch_uow
+        logger.info(batch_uow['input_params'])
         return {
             **batch_uow,
             'publish_response': connector.put_events(batch_uow['input_params'])
