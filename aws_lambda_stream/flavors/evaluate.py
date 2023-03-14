@@ -37,7 +37,8 @@ def evaluate(rule):
                     **pick(rule,[
                         'logger',
                         'max_batch_size',
-                        'bus_name'
+                        'bus_name',
+                        'source'
                     ]),
                     'max_batch_size': 1,
                     'event_field': 'emit'
