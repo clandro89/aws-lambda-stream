@@ -17,7 +17,8 @@ def cdc(rule):
             rule['publish'](pick(rule,[
                 'logger',
                 'max_batch_size',
-                'bus_name'
+                'bus_name',
+                'source'
             ])),
         )
     return wrapper
