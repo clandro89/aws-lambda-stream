@@ -20,8 +20,7 @@ def publish_to_event_bridge(
     max_batch_size=os.getenv('PUBLISH_BATCH_SIZE') or os.getenv('BATCH_SIZE') or 10,
     parallel=os.getenv('PUBLISH_PARALLEL') or os.getenv('PARALLEL') or OPTIMAL_THREAD_COUNT,
     handle_errors=True
-):
-    
+    ):
     connector = Connector()
     def to_input_params(batch_uow):
         return {
