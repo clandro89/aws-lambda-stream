@@ -32,7 +32,9 @@ def to_kinesis_records(events):
                 'awsRegion': 'us-west-2',
                 'kinesis': {
                     'sequenceNumber': f"{i}",
-                    'data': base64.b64encode(json.dumps(e, cls=JSONEncoder).encode('utf-8'))
+                    'data': base64.b64encode(
+                        json.dumps(e, cls=JSONEncoder).encode('utf-8')
+                    ).decode('utf-8')
                 }
             }
             for i,e in enumerate(events)
