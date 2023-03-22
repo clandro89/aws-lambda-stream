@@ -20,6 +20,16 @@ def put_object_to_s3(
     return _wrapper
 
 
+def to_get_object_request(uow):
+    return {
+        **uow,
+        'get_request': {
+            'Bucket': uow['record']['s3']['bucket']['name'],
+            'Key': uow['record']['s3']['object']['key']
+        }
+    }
+
+
 def get_object_from_s3(
     bucket_name = os.getenv('BUCKET_NAME'),
     get_request_field='get_request',
