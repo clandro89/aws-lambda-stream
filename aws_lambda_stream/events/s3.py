@@ -32,7 +32,7 @@ def to_s3_records(notifications):
                 'eventSource': 'aws:s3',
                 'awsRegion': 'us-west-2',
                 # 'eventTime': '2019-09-03T19:37:27.192Z',
-                # 'eventName': 'ObjectCreated:Put',
+                'eventName': 'ObjectCreated:Put',
                 # 'userIdentity': {
                 #   'principalId': 'AWS:AIDAINPONIXQXHT3IKHL2',
                 # },
