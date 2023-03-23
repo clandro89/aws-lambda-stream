@@ -5,3 +5,4 @@ from .s3 import Connector as S3Connector
 from .sns import Connector as SnsConnector
 from .sqs import Connector as SqsConnector
 from .lambda_ import Connector as LambdaConnector
+from .cloudwatch import Connector as CloudwatchConnector
