@@ -38,7 +38,6 @@ def format_fault(err: Exception):
         'partition_key': str(uuid4()),
         'type': FAULT_EVENT_TYPE,
         'timestamp': now(),
-        'pipeline': err.uow.get('pipeline') or 'undefined',
         'tags':{
             'functionname': os.getenv('AWS_LAMBDA_FUNCTION_NAME'),
             'pipeline': err.uow.get('pipeline') or 'undefined'

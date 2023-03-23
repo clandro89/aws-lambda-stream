@@ -11,7 +11,7 @@ def adorn_standard_tags(event_field):
                 'tags': {
                     **env_tags(uow.get('pipeline', None)),
                     **skip_tag(),
-                    **(uow.get('event_field', {}).get('tags', {}))
+                    **(uow.get(event_field, {}).get('tags', {}))
                 }
             }
         }
