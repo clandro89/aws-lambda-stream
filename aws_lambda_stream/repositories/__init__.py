@@ -62,6 +62,9 @@ class BaseEntityRepository():
             ),
         }
         self.connector.update(params)
+    def delete_bulk(self, pks: list, sk = None, data = None):
+        for pk in pks:
+            self.delete(pk, sk, data)
     def query(self, input_params):
         return self.connector.query(input_params)
     def get_item(self, params):
