@@ -10,6 +10,7 @@ from aws_lambda_stream.connectors.dynamodb import Connector
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.operators import rx_map
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
+from aws_lambda_stream.utils.retry import DEFAULT_RETRY_CONFIG
 
 
 def serialize_number(number: str) -> Union[float, int]:
@@ -127,6 +128,31 @@ def put_dynamodb(
             )
         }
     return faulty(wrapper)
+
+
+def batch_get_dynamodb( # pylint: disable=W0102
+    table_name= os.getenv('EVENT_TABLE_NAME') or os.getenv('ENTITY_TABLE_NAME'),
+    batch_get_request_field='batch_get_request',
+    batch_get_response_field='batch_get_response',
+    retry_config=DEFAULT_RETRY_CONFIG
+    ):
+    connector = Connector(table_name, retry_config)
+
+    def invoke(uow):
+        if not batch_get_request_field in uow:
+            return uow
+        return {
+            **uow,
+            batch_get_response_field: connector.batch_get(
+                uow[batch_get_request_field]
+            )
+        }
+
+    def wrapper(source: Observable):
+        return source.pipe(
+            rx_map(faulty(invoke)),
+        )
+    return wrapper
 
 
 def query_dynamodb(
