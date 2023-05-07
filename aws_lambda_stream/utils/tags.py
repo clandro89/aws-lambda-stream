@@ -23,6 +23,7 @@ def env_tags(pipeline):
         'account': os.getenv('ACCOUNT_NAME', 'undefined'),
         'region': os.getenv('AWS_REGION', 'undefined'),
         'stage': os.getenv('STAGE', 'undefined'),
+        'app': os.getenv('APP_NAME', 'undefined'),
         'source': (
             os.getenv('SERVICE') or
             os.getenv('PROJECT') or
