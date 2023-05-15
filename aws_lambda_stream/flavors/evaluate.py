@@ -1,6 +1,6 @@
 from functools import reduce
 from reactivex import Observable
-from pydash import get, pick, omit, merge
+from pydash import get, pick, omit, merge, sort_by
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
 from aws_lambda_stream.utils.dynamodb import query_dynamodb
@@ -98,7 +98,11 @@ def _complex(rule):
             ),
             rx_map(lambda uow: {
                 **uow,
-                'correlated': [i['event'] for i in uow['correlated']]
+                'correlated': sort_by(
+                    [i['event'] for i in uow['correlated']],
+                    'timestamp',
+                    reverse=True
+                )
             }),
             rx_map(_expression(rule)),
             rx_filter(lambda uow: uow['expression'])
