@@ -209,6 +209,7 @@ def test_should_execute_simple_rules(monkeypatch):
         },
         "partition_key": "11",
         "tags": {
+            'app': 'undefined',
             "account": "undefined",
             "region": "undefined",
             "stage": "test",
@@ -240,21 +241,22 @@ def test_should_execute_simple_rules(monkeypatch):
         "description": "This is thing two"
       },
       "tags": {
-        "account": "undefined",
-        "region": "undefined",
-        "stage": "test",
-        "source": "undefined",
-        "functionname": "undefined",
-        "pipeline": "eval2-single-emit",
-        "skip": True
-      },
-      "triggers": [
-        {
-          "id": "2",
-          "type": "e2",
-          "timestamp": 1548967022000
-        }
-      ]
+            "app": "undefined",
+            "account": "undefined",
+            "region": "undefined",
+            "stage": "test",
+            "source": "undefined",
+            "functionname": "undefined",
+            "pipeline": "eval2-single-emit",
+            "skip": True
+        },
+        "triggers": [
+            {
+            "id": "2",
+            "type": "e2",
+            "timestamp": 1548967022000
+            }
+        ]
     }))
 
     expect(len(collected)).to(equal(4))
@@ -271,6 +273,7 @@ def test_should_execute_simple_rules(monkeypatch):
         "description": "This is thing three"
       },
       "tags": {
+          'app': 'undefined',
         "account": "undefined",
         "region": "undefined",
         "stage": "test",
@@ -411,6 +414,7 @@ def test_should_execute_complex_rules(monkeypatch):
             "description": "This is thing four"
         },
         "tags": {
+            'app': 'undefined',
             "account": "undefined",
             "region": "undefined",
             "stage": "test",
@@ -619,6 +623,7 @@ def test_should_execute_correlation_rules(monkeypatch):
             "description": "This is thing six"
         },
         "tags": {
+            "app": "undefined",
             "account": "undefined",
             "region": "undefined",
             "stage": "test",
