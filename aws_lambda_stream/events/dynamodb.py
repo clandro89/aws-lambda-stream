@@ -2,6 +2,7 @@ import os
 import json
 from decimal import Decimal
 import pydash
+from pydash import get
 from aws_lambda_stream.utils.dynamodb import unmarshall,marshall
 
 
@@ -69,9 +70,9 @@ def _calculate_event_type_suffix(record):
         old_image = record.get('dynamodb').get('OldImage')
         if ((new_image and new_image.get('deleted')) or
             (old_image and old_image.get('deleted'))):
-            if new_image and new_image.get('deleted'):
+            if new_image and get(new_image, 'deleted.BOOL'):
                 return 'deleted'
-            if old_image and old_image.get('deleted'):
+            if old_image and get(old_image, 'deleted.BOOL'):
                 return 'undeleted'
     return suffix
 
