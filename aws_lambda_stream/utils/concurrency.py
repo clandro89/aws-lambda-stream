@@ -19,8 +19,14 @@ async def _execute_task(
     task: Callable,
     *args
     ):
+    def wrapper(*p):
+        try:
+            return task(*p)
+        except Exception as e:
+            return e
+
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, task, *args)
+    return await loop.run_in_executor(None, wrapper, *args)
 
 
 def multitask(
