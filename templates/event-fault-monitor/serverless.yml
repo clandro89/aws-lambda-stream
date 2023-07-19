@@ -18,9 +18,6 @@ functions: ${file(config/functions.yml):${self:provider.stage}.functions}
 resources: ${file(config/resources.yml):${self:provider.stage}.resources}
 
 custom:
-  prune:
-    automatic: true
-    number: 10
   pythonRequirements:
     dockerImage: public.ecr.aws/sam/emulation-python3.9:latest
     dockerizePip: non-linux

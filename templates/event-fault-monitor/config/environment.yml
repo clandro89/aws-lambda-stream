@@ -1,12 +1,12 @@
 .environment: &default_environment
-  APP_NAME: ${self:service}
+  APP_NAME: myapp
   STAGE: ${self:provider.stage}
   REGION: ${self:provider.region}
-  PROJECT: ${self:service}
-  BUS_NAME: ${cf:tms-event-hub-${self:provider.stage}.busName}
-  BUS_ARN: ${cf:tms-event-hub-${self:provider.stage}.busArn}
-  STREAM_ARN: ${cf:tms-event-hub-${self:provider.stage}.stream1Arn}
-  NAMESPACE: dms-event-fault
+  SERVICE: ${self:service}
+  BUS_NAME: ${cf:event-hub-${self:provider.stage}.busName}
+  BUS_ARN: ${cf:event-hub-${self:provider.stage}.busArn}
+  STREAM_ARN: ${cf:event-hub-${self:provider.stage}.stream1Arn}
+  NAMESPACE: event-fault
   BUCKET_NAME: !Ref Bucket
 
 dev:
