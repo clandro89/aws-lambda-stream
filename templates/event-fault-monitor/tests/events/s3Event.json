@@ -1,0 +1,39 @@
+{
+    "Records": [
+        {
+            "eventVersion": "2.1",
+            "eventSource": "aws:s3",
+            "awsRegion": "us-west-2",
+            "eventTime": "2022-10-15T21:47:08.216Z",
+            "eventName": "ObjectCreated:Put",
+            "userIdentity": {
+                "principalId": "AWS:AIDA6M3D4OZTMRTBFJVF4"
+            },
+            "requestParameters": {
+                "sourceIPAddress": "187.190.153.45"
+            },
+            "responseElements": {
+                "x-amz-request-id": "WW7PG2T9Y8ZJGSVM",
+                "x-amz-id-2": "OSpYJb4hClnQsu9QipGqRHHZ0pr8vhavR9OZgJXZbFK8MTi3F8cmEpekDQ7O2ZdTLedIvTjefVYzm1p32CIC2kcBmILD0SUW"
+            },
+            "s3": {
+                "s3SchemaVersion": "1.0",
+                "configurationId": "event-fault-monitor-dev-bucket-1jbfm2f87k1la-trigger-68a737133cefb25bff959852b8f04754",
+                "bucket": {
+                    "name": "event-fault-monitor-dev-bucket-1jbfm2f87k1la",
+                    "ownerIdentity": {
+                        "principalId": "A1O2O9L15X2AOZ"
+                    },
+                    "arn": "arn:aws:s3:::event-fault-monitor-dev-bucket-1jbfm2f87k1la"
+                },
+                "object": {
+                    "key": "us-west-2/2023/03/15/18/event-fault-monitor-dev-DeliveryStream-0MCWUtIA6fCy-1-2023-03-15-18-17-53-b0b557cf-b435-4c33-b26a-49cc3a22c41a",
+                    "size": 219,
+                    "eTag": "e14721f86bbda2cc2b0062319bc37d46",
+                    "versionId": "liUF5LNMXaxTITIsvAtBdll_6RFgxTL2",
+                    "sequencer": "00634B2A5C1A443184"
+                }
+            }
+        }
+    ]
+}

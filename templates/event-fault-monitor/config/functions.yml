@@ -1,0 +1,16 @@
+.functions: &default_functions
+  trigger:
+    handler: src.entrypoints.trigger.handler.handler
+    events:
+      - s3:
+          bucket: !Ref Bucket
+          event: s3:ObjectCreated:*
+          existing: true
+
+
+dev:
+  functions: *default_functions
+prod:
+  functions: *default_functions
+stg:
+  functions: *default_functions

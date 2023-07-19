@@ -1,0 +1,23 @@
+.environment: &default_environment
+  APP_NAME: ${self:service}
+  STAGE: ${self:provider.stage}
+  REGION: ${self:provider.region}
+  PROJECT: ${self:service}
+  BUS_NAME: ${cf:tms-event-hub-${self:provider.stage}.busName}
+  BUS_ARN: ${cf:tms-event-hub-${self:provider.stage}.busArn}
+  STREAM_ARN: ${cf:tms-event-hub-${self:provider.stage}.stream1Arn}
+  NAMESPACE: dms-event-fault
+  BUCKET_NAME: !Ref Bucket
+
+dev:
+  environment:
+    <<: *default_environment
+    LOG_LEVEL: "DEBUG"
+stg:
+  environment:
+    <<: *default_environment
+    LOG_LEVEL: "DEBUG"
+prod:
+  environment:
+    <<: *default_environment
+    LOG_LEVEL: "INFO"
