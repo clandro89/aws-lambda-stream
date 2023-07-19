@@ -1,0 +1,196 @@
+service: event-hub
+
+provider:
+  name: aws
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "us-east-1"}
+
+custom:
+  egressBuses:
+    dms: arn:aws:events:${self:provider.region}:989662574182:event-bus/event-hub-bus-${self:provider.stage}
+    tct: arn:aws:events:${self:provider.region}:989662574182:event-bus/tct-event-hub-bus-${self:provider.stage}
+  dev:
+    ingressShardCount: 1
+    streamProperties:
+      Name: ${self:service}-${self:provider.stage}
+      RetentionPeriodHours: 24
+      ShardCount: 1
+      StreamModeDetails:
+        StreamMode: PROVISIONED
+    egressBuses:
+      y: arn:aws:events:${self:provider.region}:989662574182:event-bus/event-hub-bus-${self:provider.stage}
+  prod:
+    ingressShardCount: 2
+    streamProperties:
+      Name: ${self:service}-${self:provider.stage}
+      RetentionPeriodHours: 24
+      StreamModeDetails:
+        StreamMode: ON_DEMAND
+    egressBuses:
+      y: arn:aws:events:${self:provider.region}:989662574182:event-bus/event-hub-bus-${self:provider.stage}
+
+resources:
+  Resources:
+    Bus:
+      Type: AWS::Events::EventBus
+      Properties:
+        Name: ${self:service}-bus-${self:provider.stage}
+
+    # ----------
+    # STREAMS
+    # ----------
+
+    Stream1:
+      Type: AWS::Kinesis::Stream
+      Properties: ${self:custom.${self:provider.stage}.streamProperties}
+
+    # StreamConsumer1:
+    #   Type: AWS::Kinesis::StreamConsumer
+    #   Properties:
+    #     ConsumerName: ${opt:stage}-${self:service}-s1-c1
+    #     StreamARN:
+    #       Fn::GetAtt: [ Stream1, Arn ]
+
+    # IngressStream:
+    #   Type: AWS::Kinesis::Stream
+    #   Properties:
+    #     Name: ${self:service}-ingress-${self:provider.stage}
+    #     RetentionPeriodHours: 24
+    #     ShardCount: ${self:custom.${self:provider.stage}.ingressShardCount}
+
+    # ----------
+    # POLICIES
+    # ----------
+
+    BusRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: events.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: internal
+            PolicyDocument:
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - kinesis:PutRecord
+                    - kinesis:PutRecords
+                  Resource:
+                    - Fn::GetAtt: [ Stream1, Arn ]
+                    # - Fn::GetAtt: [ Stream2, Arn ]
+                    # - Fn::GetAtt: [ IngressStream, Arn ]
+          # - PolicyName: egress
+          #   PolicyDocument:
+          #     Statement:
+          #       - Effect: Allowgit
+          #         Action:
+          #           - events:PutEvents
+          #         Resource:
+          #           # add an arn for each downstream subsystem
+          #           - ${self:custom.${self:provider.stage}.egressBuses.y}
+
+    # add a policy for each upstream subsystem
+    # EventBusPolicyForTxp:
+    #   Type: AWS::Events::EventBusPolicy
+    #   Properties:
+    #     EventBusName:
+    #       Ref: Bus
+    #     Action: events:PutEvents
+    #     Principal: 989662574182
+    #     StatementId: Txp
+
+  
+    # ----------
+    # RULES
+    # ----------
+
+    Stream1EventRule:
+      Type: AWS::Events::Rule
+      Properties:
+        EventBusName:
+          Ref: Bus
+        EventPattern:
+          source:
+            - anything-but: external
+          detail:
+            type:
+              - anything-but: fault
+        State: ENABLED
+        Targets:
+          - Id: Stream1
+            Arn:
+              Fn::GetAtt: [ Stream1, Arn ]
+            RoleArn:
+              Fn::GetAtt: [ BusRole, Arn ]
+            KinesisParameters:
+              PartitionKeyPath: $.detail.partition_key
+            InputPath: $.detail
+
+    # EgressEventRule:
+    #   Type: AWS::Events::Rule
+    #   Properties:
+    #     EventBusName:
+    #       Ref: Bus
+    #     EventPattern:
+    #       source:
+    #         - external
+    #     State: ENABLED
+    #     Targets:
+    #       # add a target for each downstream subsystem
+    #       - Id: EgressY
+    #         Arn: ${self:custom.${self:provider.stage}.egressBuses.y}
+    #         RoleArn:
+    #           Fn::GetAtt: [ BusRole, Arn ]
+
+
+    # IngressStreamEventRule:
+    #   Type: AWS::Events::Rule
+    #   Properties:
+    #     EventBusName:
+    #       Ref: Bus
+    #     EventPattern:
+    #       source:
+    #         - external
+    #     State: ENABLED
+    #     Targets:
+    #       - Id: IngressStream
+    #         Arn:
+    #           Fn::GetAtt: [ IngressStream, Arn ]
+    #         RoleArn:
+    #           Fn::GetAtt: [ BusRole, Arn ]
+    #         KinesisParameters:
+    #           PartitionKeyPath: $.detail.partition_key
+    #         InputPath: $.detail
+
+  Outputs:
+    busName:
+      Value:
+        Ref: Bus
+    busArn:
+      Value:
+        Fn::GetAtt: [ Bus, Arn ]
+
+    stream1Name:
+      Value:
+        Ref: Stream1
+    stream1Arn:
+      Value:
+        Fn::GetAtt: [ Stream1, Arn ]
+
+    # StreamConsumer1Name:
+    #   Value:
+    #     Fn::GetAtt: [ StreamConsumer1, ConsumerName ]
+    # StreamConsumer1Arn:
+    #   Value:
+    #     Ref: StreamConsumer1
+
+    # ingressStreamName:
+    #   Value:
+    #     Ref: IngressStream
+    # ingressStreamArn:
+    #   Value:
+    #     Fn::GetAtt: [ IngressStream, Arn ]
