@@ -1,0 +1,11 @@
+{
+  "name": "event-hub",
+  "private": true,
+  "scripts": {
+    "test": "sls package",
+    "deploy": "sls deploy"
+  },
+  "devDependencies": {
+    "serverless": "^3.21.0"
+  }
+}
