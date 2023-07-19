@@ -1,0 +1,48 @@
+service: aws-lambda-stream
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-plugin-package-path
+  - serverless-python-requirements
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: ${opt:stage, "prod"}
+  region: ${opt:region, "us-east-1"}
+  logRetentionInDays: 14
+
+layers: 
+  layer:
+    path: .
+    name: ${self:service}
+    description: AWS Lambda Stream
+    retain: true
+
+custom:
+  pythonRequirements:
+    noDeploy:
+      - boto3
+      - botocore
+    useStaticCache: false
+    slim: true
+    dockerizePip: true
+    dockerImage: public.ecr.aws/sam/build-python3.9
+  packagePath:
+    path: python/lib/${self:provider.runtime}/site-packages
+
+package:
+  artifact: ./.serverless/layer.zip
+  excludeDevDependencies: true
+  exclude:
+  - "**/__pycache__"
+  - "**/*.pyc"
+  patterns:
+    - '!.git/**'
+    - '!.venv/**'
+    - '!env/**'
+    - '!node_modules/**'
+    - '!service/config/local.py'
+    - '!tests/**'
+    - '!config/**'
