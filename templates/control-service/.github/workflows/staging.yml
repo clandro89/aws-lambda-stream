@@ -1,0 +1,25 @@
+name: Deploy serverless service
+
+on: 
+  push:
+    branches:
+      - staging
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  STAGE: stg
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Python, install dependencies & run tests
+        uses: clandro89/serverless-actions/python@master
+      - name: Setup Node and install dependencies
+        uses: clandro89/serverless-actions/node@master
+      - name: Deploy in us-east-1
+        run: npx serverless deploy --stage $STAGE --region us-east-1
+
