@@ -1,0 +1,33 @@
+.functions: &default_functions
+  listener:
+    handler: src.entrypoints.listener.handler.handler
+    events:
+      - stream:
+          arn: ${self:provider.environment.STREAM_ARN}
+          # filterPatterns:
+          #   - data:
+          #       type:
+          #         - thing-created
+          #         - thing-updated
+          #         - thing-deleted
+          #         - thing-undeleted
+  
+  trigger:
+    handler: src.entrypoints.trigger.handler.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt DynamoTableStreamArnGetter.StreamArn
+          batchSize: 100
+          startingPosition: TRIM_HORIZON
+  
+  rest:
+    handler: src.entrypoints.rest.handler.handler
+    events:
+      - httpApi:
+          path: /things/search
+          method: post
+dev:
+  functions: *default_functions
+prod:
+  functions: *default_functions

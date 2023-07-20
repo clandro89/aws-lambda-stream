@@ -1,0 +1,36 @@
+service: my-bff-service
+
+plugins:
+  - serverless-python-requirements
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "us-east-1"}
+  iam: ${file(config/iam.yml):${self:provider.stage}.iam}
+  environment: ${file(config/environment.yml):${self:provider.stage}.environment}
+  layers: ${file(config/config.yml):${self:provider.stage}.layers}
+
+functions: ${file(config/functions.yml):${self:provider.stage}.functions}
+
+resources: ${file(config/resources.yml):${self:provider.stage}.resources}
+
+custom:
+  pythonRequirements:
+    dockerImage: public.ecr.aws/sam/emulation-python3.9:latest
+    dockerizePip: true
+
+package:
+  excludeDevDependencies: true
+  exclude:
+  - "**/__pycache__"
+  - "**/*.pyc"
+  patterns:
+    - '!.git/**'
+    - '!.venv/**'
+    - '!env/**'
+    - '!node_modules/**'
+    - '!service/config/local.py'
+    - '!tests/**'
+    - '!config/**'
