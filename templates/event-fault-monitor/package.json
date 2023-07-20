@@ -1,0 +1,12 @@
+{
+  "name": "event-fault-monitor",
+  "private": true,
+  "scripts": {
+    "test": "sls package",
+    "deploy": "sls deploy"
+  },
+  "dependencies": {
+    "serverless": "^3.19.0",
+    "serverless-python-requirements": "^5.4.0"
+  }
+}

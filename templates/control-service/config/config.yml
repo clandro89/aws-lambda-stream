@@ -1,0 +1,9 @@
+.layers: &default_layers
+  - ${cf:aws-lambda-stream.AwsDashLambdaDashStreamLambdaLayerQualifiedArn}
+  
+dev:
+  layers: *default_layers
+stg:
+  layers: *default_layers
+prod:
+  layers: *default_layers

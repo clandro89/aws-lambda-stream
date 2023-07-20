@@ -1,0 +1,31 @@
+.iam: &default_roles
+  role:
+    statements:
+    - Effect: Allow
+      Action:
+        - lambda:GetLayerVersion
+        - lambda:AddPermission
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - dynamodb:BatchGetItem
+        - dynamodb:GetItem
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:BatchWriteItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - events:PutEvents
+      Resource: "*"
+dev:
+  iam:
+    <<: *default_roles
+stg:
+  iam:
+    <<: *default_roles
+prod:
+  iam:
+    <<: *default_roles

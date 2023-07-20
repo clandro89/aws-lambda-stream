@@ -1,0 +1,12 @@
+{
+  "name": "rest-bff-service",
+  "private": true,
+  "scripts": {
+    "test": "sls package",
+    "deploy": "sls deploy"
+  },
+  "dependencies": {
+    "serverless": "^3.23.0",
+    "serverless-python-requirements": "^5.4.0"
+  }
+}

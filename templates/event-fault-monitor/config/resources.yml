@@ -1,0 +1,121 @@
+.resources: &default_resources
+  Resources:
+    Bucket:
+      Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
+      Properties:
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        VersioningConfiguration:
+          Status: Enabled
+
+    DeliveryStream:
+      Type: AWS::KinesisFirehose::DeliveryStream
+      Properties:
+        DeliveryStreamType: DirectPut
+        ExtendedS3DestinationConfiguration:
+          BucketARN: !GetAtt Bucket.Arn
+          Prefix: ${self:provider.region}/
+          BufferingHints:
+            IntervalInSeconds: 60
+            SizeInMBs: 50
+          CompressionFormat: UNCOMPRESSED
+          RoleARN: !GetAtt DeliveryRole.Arn
+          CloudWatchLoggingOptions:
+            Enabled: true
+            LogGroupName: !Ref LogGroup
+            LogStreamName: !Ref LogStream
+
+    LogGroup:
+      Type: AWS::Logs::LogGroup
+    
+    LogStream:
+      Type: AWS::Logs::LogStream
+      Properties: 
+        LogGroupName: !Ref LogGroup
+        LogStreamName: event-faults
+
+    DeliveryRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: firehose.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:               
+          - PolicyName: delivery
+            PolicyDocument:
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - s3:AbortMultipartUpload
+                    - s3:GetBucketLocation
+                    - s3:GetObject
+                    - s3:ListBucket
+                    - s3:ListBucketMultipartUploads
+                    - s3:PutObject
+                  Resource:
+                    - !GetAtt Bucket.Arn
+                    - Fn::Join:
+                        - /
+                        - - !GetAtt Bucket.Arn
+                          - '*'
+                - Effect: Allow
+                  Action:
+                    - logs:PutLogEvents
+                  Resource: !GetAtt LogGroup.Arn
+    
+    EventBridgeRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: events.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:               
+          - PolicyName: put
+            PolicyDocument:
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - firehose:PutRecord
+                    - firehose:PutRecordBatch
+                  Resource: !GetAtt DeliveryStream.Arn
+
+    EventRule: 
+      Type: AWS::Events::Rule
+      Properties: 
+        EventBusName: ${self:provider.environment.BUS_NAME}
+        EventPattern: 
+          detail: 
+            type: 
+              - fault
+        State: ENABLED
+        Targets: 
+          - Id: EventFaults
+            Arn: !GetAtt DeliveryStream.Arn
+            RoleArn: !GetAtt EventBridgeRole.Arn
+            InputTransformer:
+              InputTemplate: "<aws.events.event>\n" # the EOL supports parsing in cli
+
+  Outputs:
+    BucketName:
+      Value:
+        Ref: Bucket
+    BucketArn:
+      Value: !GetAtt Bucket.Arn
+        
+dev:
+  resources: *default_resources
+prod:
+  resources: *default_resources
+stg:
+  resources: *default_resources
+test:
+  resources:
