@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "aws-lambda-stream-layer"
+version = "1.0.0"
+description = ""
+authors = ["Alejandro"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+aws-lambda-stream = "^1.0.30"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

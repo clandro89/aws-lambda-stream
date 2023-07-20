@@ -1,0 +1,21 @@
+.environment: &default_environment
+  APP_NAME: myapp
+  STAGE: ${self:provider.stage}
+  REGION: ${self:provider.region}
+  SERVICE: ${self:service}
+  EVENT_TABLE_NAME: ${self:service}-events-${self:provider.stage}
+  BUS_NAME: ${cf:event-hub-${self:provider.stage}.busName}
+  STREAM_ARN: ${cf:event-hub-${self:provider.stage}.stream1Arn}
+
+dev:
+  environment:
+    <<: *default_environment
+    LOG_LEVEL: "DEBUG"
+stg:
+  environment:
+    <<: *default_environment
+    LOG_LEVEL: "DEBUG"
+prod:
+  environment:
+    <<: *default_environment
+    LOG_LEVEL: "INFO"

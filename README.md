@@ -15,6 +15,19 @@ With `poetry`, run:
 poetry add aws-lambda-stream
 ````
 
+## Project Templates
+The following project templates are provided to help get your event platform up and running:
+
+* event hub
+* event-lake-s3
+* event-fault-monitor
+* rest-bff-service
+* control-service
+
+
+Create your own project using the Serverless Framework, such as: `sls create --template-url https://github.com/clandro89/aws-lambda-stream/tree/master/templates/event-hub --path myprefix-event-hub`
+
+
 ## Credits
 - [aws-lambda-stream](https://github.com/jgilbert01/aws-lambda-stream)
 

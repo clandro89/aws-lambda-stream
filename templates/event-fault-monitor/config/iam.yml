@@ -1,0 +1,25 @@
+.iam: &default_roles
+  role:
+    statements:
+    - Effect: Allow
+      Action: cloudwatch:PutMetricData
+      Resource: '*'
+    - Effect: Allow
+      Action:
+        - "s3:GetObject"
+        - "s3:ListBucket"
+      Resource: '*'
+    # - Effect: Allow
+    #   Action: sns:Publish
+    #   Resource:
+    #     - ${self:custom.accounts.${opt:acct}.criticalAlarmTopicArn}
+
+dev:
+  iam:
+    <<: *default_roles
+stg:
+  iam:
+    <<: *default_roles
+prod:
+  iam:
+    <<: *default_roles

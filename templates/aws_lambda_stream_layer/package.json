@@ -1,0 +1,13 @@
+{
+  "name": "aws-lambda-stream-layer",
+  "private": true,
+  "scripts": {
+    "test": "sls package",
+    "deploy": "sls deploy"
+  },
+  "dependencies": {
+    "serverless": "^3.19.0",
+    "serverless-python-requirements": "^5.4.0",
+    "serverless-plugin-package-path": "github:Fondeadora/serverless-plugin-package-path"
+  }
+}

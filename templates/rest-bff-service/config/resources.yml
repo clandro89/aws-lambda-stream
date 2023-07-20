@@ -1,0 +1,61 @@
+.resources: &default_resources
+  Resources:
+    EntitiesTable:
+      Type: AWS::DynamoDB::GlobalTable
+      Condition: CreateDynamodb
+      Properties:
+        TableName: ${self:provider.environment.ENTITY_TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+        BillingMode: PAY_PER_REQUEST
+        Replicas:
+          - Region: us-east-1
+          - Region: us-west-2
+
+    DynamodbWaitHandle: 
+      Condition: CreateDynamodb
+      DependsOn: EntitiesTable
+      Type: AWS::CloudFormation::WaitConditionHandle
+
+    WaitHandle: 
+      Type: AWS::CloudFormation::WaitConditionHandle
+
+    WaitCondition: 
+      Type: AWS::CloudFormation::WaitCondition
+      Properties: 
+        Handle: !If [CreateDynamodb, !Ref DynamodbWaitHandle, !Ref WaitHandle]
+        Timeout: "1"
+        Count: 0
+        
+    DynamoTableStreamArnGetter:
+      Type: Custom::DynamoTableStreamArnFunction
+      DependsOn: WaitCondition
+      Properties:
+        ServiceToken: ${cf:get-dynamodb-stream-prod.GetDynamodbStreamFunctionArn}
+        TableName: ${self:provider.environment.ENTITY_TABLE_NAME}
+
+  Parameters:
+    Region:
+      Type: String
+      Description: AWS Region.
+      Default: ${self:provider.region}
+  
+  Conditions:
+    CreateDynamodb: !Equals 
+      - !Ref Region
+      - us-east-1
+
+dev:
+  resources: *default_resources
+prod:
+  resources: *default_resources
