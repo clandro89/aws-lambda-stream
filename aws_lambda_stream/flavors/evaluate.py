@@ -36,11 +36,9 @@ def evaluate(rule):
             rule['publish']({
                     **pick(rule,[
                         'logger',
-                        'max_batch_size',
                         'bus_name',
                         'source'
                     ]),
-                    'max_batch_size': 1,
                     'event_field': 'emit'
                 }),
         )

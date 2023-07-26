@@ -16,7 +16,6 @@ def cdc(rule):
             rx_map(_to_event(rule)),
             rule['publish'](pick(rule,[
                 'logger',
-                'max_batch_size',
                 'bus_name',
                 'source'
             ])),
