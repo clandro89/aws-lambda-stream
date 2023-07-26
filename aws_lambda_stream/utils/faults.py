@@ -61,7 +61,6 @@ def flush_faults(rule):
         ops.map(lambda fault: {'event': fault}),
         rule['publish'](pick(rule,[
             'logger',
-            'max_batch_size',
             'bus_name'
         ])),
     ).subscribe()
