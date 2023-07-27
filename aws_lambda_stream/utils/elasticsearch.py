@@ -12,8 +12,7 @@ from .batch import to_batch_uow, unbatch_uow
 def update_elasticsearch(
     connector: Connector,
     update_field='update_request',
-    batch_size=os.getenv('PUBLISH_BATCH_SIZE') or os.getenv('BATCH_SIZE') or 10,
-    max_batch_size=os.getenv('PUBLISH_BATCH_SIZE') or os.getenv('BATCH_SIZE') or 10,
+    batch_size=os.getenv('PUBLISH_BATCH_SIZE') or os.getenv('BATCH_SIZE') or 10
 ):
     def to_input_params(batch_uow):
         return {
@@ -41,7 +40,7 @@ def update_elasticsearch(
         }
     def wrapper(source: Observable):
         return source.pipe(
-            ops.buffer_with_count(max_batch_size if batch_size > max_batch_size else batch_size),
+            ops.buffer_with_count(batch_size, batch_size),
             rx_map(to_batch_uow),
             rx_map(to_input_params),
             rx_map(faulty(put_items)),
