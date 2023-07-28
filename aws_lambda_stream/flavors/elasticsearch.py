@@ -16,8 +16,7 @@ def elasticsearch(rule):
             update_elasticsearch(
                 connector=Connector(
                     rule.get('domain_host') or os.getenv('ES_DOMAIN_HOST')
-                ),
-                max_batch_size=rule['max_batch_size'],
+                )
             )
         )
     return wrapper

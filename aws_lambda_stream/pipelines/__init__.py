@@ -48,8 +48,7 @@ class StreamPipeline():
                         'id': k,
                         'pipeline': copy.copy(k),
                         **self.opt,
-                        'logger': Logger(k),
-                        'max_batch_size': len(iterable) if len(iterable) > 0 else 10
+                        'logger': Logger(k)
                     }
                 )
             )

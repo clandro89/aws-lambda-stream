@@ -10,8 +10,7 @@ def send_to_sqs(
     logger=Logger(),
     queue_url = os.getenv('QUEUE_URL'),
     message_field = 'message',
-    batch_size=os.getenv('SQS_BATCH_SIZE') or os.getenv('BATCH_SIZE') or 10,
-    max_batch_size=os.getenv('SQS_BATCH_SIZE') or os.getenv('BATCH_SIZE') or 10,
+    batch_size=os.getenv('SQS_BATCH_SIZE') or os.getenv('BATCH_SIZE') or 10
     ):
     connector = Connector(queue_url)
 
@@ -42,9 +41,7 @@ def send_to_sqs(
 
     def wrapper(source: Observable):
         return source.pipe(
-            ops.buffer_with_count(
-                max_batch_size if batch_size > max_batch_size else batch_size
-            ),
+            ops.buffer_with_count(batch_size, batch_size),
             ops.map(to_batch_uow),
             ops.map(to_input_params),
             ops.map(send_message_batch),
