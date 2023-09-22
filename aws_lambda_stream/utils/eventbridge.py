@@ -5,7 +5,7 @@ from aws_lambda_powertools import Logger
 from aws_lambda_stream.connectors.eventbridge import Connector
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
 from aws_lambda_stream.utils.operators import split_buffer
-from .operators import rx_map
+from .operators import rx_map,rx_filter
 from .tags import adorn_standard_tags
 from .batch import to_batch_uow, unbatch_uow
 
@@ -57,6 +57,7 @@ def publish_to_event_bridge(
 
     def wrapper(source: Observable):
         return source.pipe(
+            rx_filter(lambda uow: uow.get(event_field)),
             rx_map(adorn_standard_tags(event_field)),
             rx_map(to_publish_request_entry),
             ops.buffer_with_count(batch_size, batch_size),
