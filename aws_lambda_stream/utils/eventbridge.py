@@ -57,7 +57,6 @@ def publish_to_event_bridge(
 
     def wrapper(source: Observable):
         return source.pipe(
-            rx_filter(lambda uow: uow.get(event_field)),
             rx_map(adorn_standard_tags(event_field)),
             rx_map(to_publish_request_entry),
             ops.buffer_with_count(batch_size, batch_size),
