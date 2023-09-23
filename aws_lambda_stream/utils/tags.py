@@ -13,7 +13,7 @@ def adorn_standard_tags(event_field):
                     **skip_tag(),
                     **(uow.get(event_field, {}).get('tags', {}))
                 }
-            }
+            } if uow.get(event_field) else None
         }
     return wrapper
 
