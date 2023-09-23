@@ -4,7 +4,7 @@ from aws_lambda_stream.filters.skip import skip_tag
 
 def adorn_standard_tags(event_field):
     def wrapper(uow: dict):
-        return uow if not event_field in uow else {
+        return uow if not uow.get(event_field) else {
             **uow,
             event_field: {
                 **uow[event_field],
@@ -13,7 +13,7 @@ def adorn_standard_tags(event_field):
                     **skip_tag(),
                     **(uow.get(event_field, {}).get('tags', {}))
                 }
-            } if uow.get(event_field) else None
+            }
         }
     return wrapper
 
