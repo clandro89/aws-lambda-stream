@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aws_lambda_stream"
-version = "1.0.36"
+version = "1.0.37"
 description = "Create stream processors with AWS Lambda functions"
 authors = ["Alejandro Hernández <clandro89@gmail.com>"]
 repository="https://github.com/clandro89/aws-lambda-stream"

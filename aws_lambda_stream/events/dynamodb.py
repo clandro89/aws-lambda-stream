@@ -50,6 +50,8 @@ def from_dynamodb(
                         'timestamp': _get_timestamp(uow)
                     },
                 }
+            ).sort_by(
+                lambda uow: pydash.get(uow, 'event.timestamp', 0)
             ).value()
 
 def _calculate_event_type_prefix(record, opt):

@@ -20,6 +20,8 @@ def from_kinesis(event):
                 **json.loads(uow['event'])
             },
         }
+    ).sort_by(
+        lambda uow: pydash.get(uow, 'event.timestamp', 0)
     ).value()
 
 # test helper
