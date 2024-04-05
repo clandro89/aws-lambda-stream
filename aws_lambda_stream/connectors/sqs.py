@@ -4,9 +4,9 @@ import boto3
 
 class Connector():
 
-    def __init__(self,queue_url = os.getenv('QUEUE_URL')) -> None:
+    def __init__(self,queue_url = os.getenv('QUEUE_URL'), client = None) -> None:
         self.queue_url = queue_url
-        self.client = boto3.client('sqs')
+        self.client = client if client else boto3.client('sqs')
 
     def send_message(self, input_params):
         params = {

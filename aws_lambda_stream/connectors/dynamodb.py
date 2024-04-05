@@ -11,11 +11,13 @@ from aws_lambda_stream.utils.retry import (
 
 
 class Connector():
+
     def __init__(self,# pylint: disable=W0102
                  table_name = 'undefined',
-                 retry_config = DEFAULT_RETRY_CONFIG) -> None:
+                 retry_config = DEFAULT_RETRY_CONFIG,
+                 client = None) -> None:
         self.table_name = table_name
-        self.client = boto3.resource('dynamodb')
+        self.client = client if client else boto3.resource('dynamodb')
         self.retry_config = retry_config
 
     def get(self, input_params):
