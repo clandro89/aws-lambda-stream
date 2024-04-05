@@ -1,7 +1,7 @@
 import os
 import json
+import logging
 from reactivex import Observable, operators as ops
-from aws_lambda_powertools import Logger
 from aws_lambda_stream.connectors.eventbridge import Connector
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
 from aws_lambda_stream.utils.operators import split_buffer
@@ -11,7 +11,7 @@ from .batch import to_batch_uow, unbatch_uow
 
 # pylint: disable=unused-argument,too-many-arguments
 def publish_to_event_bridge(
-    logger=Logger(),
+    logger=logging.getLogger(),
     bus_name=os.getenv('BUS_NAME') or 'undefined',
     source=os.getenv('BUS_SRC') or 'custom',
     event_field='event',

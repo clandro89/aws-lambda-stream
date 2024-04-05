@@ -1,8 +1,8 @@
 import os
-from aws_lambda_powertools import Logger
+import logging
 from .eventbridge import publish_to_event_bridge
 
-logger = Logger()
+logger = logging.getLogger()
 
 
 DEFAULT_OPTIONS = {

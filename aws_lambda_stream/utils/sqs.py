@@ -1,13 +1,13 @@
 import os
+import logging
 from reactivex import Observable, operators as ops
-from aws_lambda_powertools import Logger
 from aws_lambda_stream.connectors.sqs import Connector
 from aws_lambda_stream.utils.operators import split_buffer
 from .batch import to_batch_uow, unbatch_uow
 
 
 def send_to_sqs(
-    logger=Logger(),
+    logger=logging.getLogger(),
     queue_url = os.getenv('QUEUE_URL'),
     message_field = 'message',
     batch_size=os.getenv('SQS_BATCH_SIZE') or os.getenv('BATCH_SIZE') or 10
