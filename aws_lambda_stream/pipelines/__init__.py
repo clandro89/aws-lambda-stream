@@ -1,9 +1,9 @@
 from functools import reduce
+import logging
 import multiprocessing
 import copy
 from reactivex import operators as ops, Observable, from_list
 from reactivex.scheduler import ThreadPoolScheduler
-from aws_lambda_powertools import Logger
 from aws_lambda_stream.utils.operators import tap
 from aws_lambda_stream.utils.faults import flush_faults
 
@@ -48,7 +48,7 @@ class StreamPipeline():
                         'id': k,
                         'pipeline': copy.copy(k),
                         **self.opt,
-                        'logger': Logger(k)
+                        'logger': logging.getLogger(k)
                     }
                 )
             )
