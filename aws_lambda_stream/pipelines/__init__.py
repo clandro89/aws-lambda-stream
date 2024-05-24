@@ -47,8 +47,8 @@ class StreamPipeline():
                     {
                         'id': k,
                         'pipeline': copy.copy(k),
+                        'logger': logging.getLogger(k),
                         **self.opt,
-                        'logger': logging.getLogger(k)
                     }
                 )
             )
