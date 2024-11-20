@@ -1,9 +1,7 @@
 from threading import current_thread
 from reactivex import of
-from aws_lambda_stream import (
-    rx_map, faulty
-)
-
+from aws_lambda_stream.utils.faults import faulty
+from aws_lambda_stream.utils.operators import rx_map
 
 def map_except(_except):
     def wrapper(i):

@@ -2,9 +2,11 @@ import time
 import random
 from expects import equal, expect
 from reactivex import Observable
-from aws_lambda_stream import initialize_from, faulty, StreamPipeline
+from aws_lambda_stream.pipelines import initialize_from, StreamPipeline
+from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.opt import DEFAULT_OPTIONS
-from aws_lambda_stream import rx_map, rx_filter
+from aws_lambda_stream.utils.faults import faulty
+from aws_lambda_stream.utils.operators import rx_map, rx_filter
 
 
 

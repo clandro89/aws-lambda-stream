@@ -1,7 +1,8 @@
 import os
 from uuid import uuid4
 from datetime import datetime
-from aws_lambda_stream import (now, ttl, update_expression, timestamp_condition)
+from aws_lambda_stream.utils.time import now, ttl
+from aws_lambda_stream.utils.dynamodb import update_expression, timestamp_condition
 from aws_lambda_stream.connectors.dynamodb import Connector
 
 

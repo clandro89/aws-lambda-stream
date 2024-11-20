@@ -1,6 +1,6 @@
 import os
 from reactivex import Observable
-from aws_lambda_stream.filters import out_source_is_self
+from aws_lambda_stream.filters.latch import out_source_is_self
 from aws_lambda_stream.utils.dynamodb import update_dynamodb
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content

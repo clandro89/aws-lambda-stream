@@ -1,12 +1,18 @@
 import os
-import boto3
 
 
 class Connector():
 
-    def __init__(self,queue_url = os.getenv('QUEUE_URL'), client = None) -> None:
+    def __init__(self, queue_url = os.getenv('QUEUE_URL'), client = None) -> None:
         self.queue_url = queue_url
-        self.client = client if client else boto3.client('sqs')
+        self._client = client
+
+    @property
+    def client(self):
+        if not self._client:
+            import boto3
+            self._client = boto3.client('sqs')
+        return self._client
 
     def send_message(self, input_params):
         params = {

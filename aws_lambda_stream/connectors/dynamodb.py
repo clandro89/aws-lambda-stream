@@ -1,7 +1,6 @@
 from functools import reduce
 from typing import Iterable
-import boto3
-from pydash import reduce_right
+
 from aws_lambda_stream.utils.retry import (
     assert_max_retries,
     DEFAULT_RETRY_CONFIG,
@@ -17,8 +16,15 @@ class Connector():
                  retry_config = DEFAULT_RETRY_CONFIG,
                  client = None) -> None:
         self.table_name = table_name
-        self.client = client if client else boto3.resource('dynamodb')
+        self._client = client
         self.retry_config = retry_config
+
+    @property
+    def client(self):
+        if not self._client:
+            import boto3
+            self._client = boto3.resource('dynamodb')
+        return self._client
 
     def get(self, input_params):
         return  self.client.Table(self.table_name).get_item(
@@ -88,27 +94,21 @@ def unprocessed(params, resp):
     }
 
 def accumulate(attempts, resp):
-    return reduce_right(
-        attempts,
-        lambda a,c: {
+    def reducer(a, c):
+        return {
             **a,
             'Responses': reduce(
-                lambda a2,c2: {
+                lambda a2, c2: {
                     **a2,
                     c2: [
-                        *a2[c2],
-                        *a['Responses'][c2]
+                        *a2.get(c2, []),
+                        *a['Responses'].get(c2, [])
                     ]
                 },
                 list(a['Responses']),
-                {
-                    **c['Responses']
-                }
+                {**c['Responses']}
             ),
-            'attempts': [
-                *attempts,
-                resp
-            ]
-        },
-        resp
-    )
+            'attempts': [*attempts, resp]
+        }
+
+    return reduce(reducer, reversed(attempts), resp)

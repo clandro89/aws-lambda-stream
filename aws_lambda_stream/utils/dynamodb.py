@@ -3,7 +3,6 @@ import json
 from decimal import Decimal
 from typing import Union
 from functools import reduce
-import boto3
 from boto3.dynamodb.types import TypeDeserializer, TypeSerializer
 from reactivex import Observable
 from aws_lambda_stream.connectors.dynamodb import Connector
@@ -20,14 +19,6 @@ def serialize_number(number: str) -> Union[float, int]:
 
 
 setattr(TypeDeserializer, '_deserialize_n', lambda _, number: serialize_number(number))
-
-client = None
-
-def get_dynamodb_client():
-    global client #pylint: disable=global-statement
-    if not client:
-        client = boto3.resource('dynamodb')
-    return client
 
 
 def update_expression(item: dict):

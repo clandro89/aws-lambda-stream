@@ -2,7 +2,8 @@ from uuid import uuid1
 from reactivex import Observable
 from pydash import map_
 from aws_lambda_stream.connectors.sns import Connector
-from aws_lambda_stream import rx_map, faulty
+from aws_lambda_stream.utils.faults import faulty
+from aws_lambda_stream.utils.operators import rx_map
 
 def publish_to_sns(
     connector: Connector,

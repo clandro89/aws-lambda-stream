@@ -3,7 +3,7 @@ from reactivex import Observable
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
 from aws_lambda_stream.utils.elasticsearch import update_elasticsearch
-from aws_lambda_stream.connectors.elasticsearch import Connector
+from aws_lambda_stream.connectors.opensearch import Connector
 from aws_lambda_stream.utils.operators import rx_filter, rx_map
 
 

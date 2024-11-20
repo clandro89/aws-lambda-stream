@@ -3,7 +3,7 @@ import json
 from decimal import Decimal
 import pydash
 from pydash import get
-from aws_lambda_stream.utils.dynamodb import unmarshall,marshall
+from aws_lambda_stream.utils.dynamodb import unmarshall, marshall
 
 
 def from_dynamodb(

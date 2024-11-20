@@ -1,4 +1,4 @@
-from aws_lambda_stream.filters import filter_on_event_type
+from aws_lambda_stream.filters.event_type import filter_on_event_type
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.filters.content import filter_on_content
 

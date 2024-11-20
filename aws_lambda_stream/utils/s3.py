@@ -1,7 +1,8 @@
 import os
 from pydash import omit_by, get, set_
 from reactivex import Observable, operators as ops, create, just, empty
-from aws_lambda_stream import faulty, rx_map
+from aws_lambda_stream.utils.faults import faulty
+from aws_lambda_stream.utils.operators import rx_map
 from aws_lambda_stream.connectors.s3 import Connector
 
 

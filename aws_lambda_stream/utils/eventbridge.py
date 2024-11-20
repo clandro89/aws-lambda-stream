@@ -5,7 +5,7 @@ from reactivex import Observable, operators as ops
 from aws_lambda_stream.connectors.eventbridge import Connector
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
 from aws_lambda_stream.utils.operators import split_buffer
-from .operators import rx_map,rx_filter
+from .operators import rx_map
 from .tags import adorn_standard_tags
 from .batch import to_batch_uow, unbatch_uow
 

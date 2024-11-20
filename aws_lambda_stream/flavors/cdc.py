@@ -1,6 +1,6 @@
 from reactivex import Observable
 from pydash import pick
-from aws_lambda_stream.filters import out_latched
+from aws_lambda_stream.filters.latch import out_latched
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
 from aws_lambda_stream.utils.operators import rx_filter, rx_map

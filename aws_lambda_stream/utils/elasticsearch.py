@@ -2,7 +2,7 @@ import os
 import json
 from pydash import get, pick
 from reactivex import Observable, operators as ops
-from aws_lambda_stream.connectors.elasticsearch import Connector
+from aws_lambda_stream.connectors.opensearch import Connector
 from aws_lambda_stream.utils.json_encoder import JSONEncoder
 from aws_lambda_stream.utils.operators import split_buffer, rx_map
 from aws_lambda_stream.utils.faults import faulty
