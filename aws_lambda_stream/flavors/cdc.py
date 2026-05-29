@@ -1,9 +1,10 @@
-from reactivex import Observable
+from reactivex import Observable, operators as ops
 from pydash import pick
 from aws_lambda_stream.filters.latch import out_latched
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
 from aws_lambda_stream.utils.operators import rx_filter, rx_map
+from aws_lambda_stream.utils.print import print_end_pipeline, print_start_pipeline
 
 
 def cdc(rule):
@@ -12,6 +13,7 @@ def cdc(rule):
         return source.pipe(
             rx_filter(out_latched),
             rx_filter(on_event_type(rule)),
+            ops.do_action(print_start_pipeline(rule)),
             rx_filter(on_content(rule)),
             rx_map(_to_event(rule)),
             rule['publish'](pick(rule,[
@@ -19,6 +21,7 @@ def cdc(rule):
                 'bus_name',
                 'source'
             ])),
+            ops.do_action(print_end_pipeline(rule)),
         )
     return wrapper
 

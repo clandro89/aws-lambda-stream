@@ -1,9 +1,10 @@
 from uuid import uuid1
-from reactivex import Observable
+from reactivex import Observable, operators as ops
 from pydash import pick, get, set_
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
 from aws_lambda_stream.utils.operators import rx_filter, rx_map, split_buffer
+from aws_lambda_stream.utils.print import print_end_pipeline, print_start_pipeline
 from aws_lambda_stream.utils.time import now
 
 
@@ -24,10 +25,12 @@ def task(rule):
     def wrapper(source: Observable):
         return source.pipe(
             rx_filter(on_event_type(rule)),
+            ops.do_action(print_start_pipeline(rule)),
             rx_filter(on_content(rule)),
             _execute(rule),
             _execute_operators(rule),
             _to_event(rule),
+            ops.do_action(print_end_pipeline(rule)),
         )
     return wrapper
 

@@ -1,17 +1,19 @@
 import os
-from reactivex import Observable
+from reactivex import Observable, operators as ops
 from pydash import get, omit
 from aws_lambda_stream.utils.dynamodb import put_dynamodb
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
 from aws_lambda_stream.utils.time import ttl_rule
 from aws_lambda_stream.utils.operators import rx_filter, rx_map
+from aws_lambda_stream.utils.print import print_end_pipeline, print_start_pipeline
 
 
 def collect(rule):
     def wrapper(source: Observable):
         return source.pipe(
             rx_filter(on_event_type(rule)),
+            ops.do_action(print_start_pipeline(rule)),
             rx_filter(on_content(rule)),
             rx_map(_correlation_key(rule)),
             rx_map(_to_put_request(rule)),
@@ -22,7 +24,8 @@ def collect(rule):
                                 os.getenv('EVENT_TABLE_NAME')
                     )
                 )
-            )
+            ),
+            ops.do_action(print_end_pipeline(rule)),
         )
     return wrapper
 

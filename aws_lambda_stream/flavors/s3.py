@@ -1,10 +1,11 @@
 import os
-from reactivex import Observable
+from reactivex import Observable, operators as ops
 from aws_lambda_stream.utils.s3 import put_object_to_s3
 from aws_lambda_stream.connectors.s3 import Connector
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
 from aws_lambda_stream.utils.operators import rx_filter, rx_map
+from aws_lambda_stream.utils.print import print_end_pipeline, print_start_pipeline
 from aws_lambda_stream.utils.split import split_object
 
 
@@ -12,6 +13,7 @@ def s3(rule):
     def wrapper(source: Observable):
         return source.pipe(
             rx_filter(on_event_type(rule)),
+            ops.do_action(print_start_pipeline(rule)),
             rx_filter(on_content(rule)),
             split_object(rule),
             rx_map(_to_s3(rule)),
@@ -19,7 +21,8 @@ def s3(rule):
                 connector=Connector(
                     rule.get('bucket_name') or os.getenv('BUCKET_NAME')
                 )
-            )
+            ),
+            ops.do_action(print_end_pipeline(rule)),
         )
     return wrapper
 

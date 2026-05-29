@@ -26,3 +26,60 @@ def test_split_path():
     expect(collected[1]['split']).to(equal({'id':2}))
     expect(collected[2]['split']).to(equal({'id':3}))
     expect(collected[3]['split']).to(equal({'id':4}))
+
+
+def test_split_callable():
+    collected = []
+
+    source = from_list([ # pylint: disable=E1102
+        {
+            'thing': {
+                'id': 1,
+            },
+        },
+    ])
+    source.pipe(
+        split_object(
+            {
+                'split_on': lambda uow, _: [
+                    {
+                        **uow,
+                        'copy': 1,
+                    },
+                    {
+                        **uow,
+                        'copy': 2,
+                    },
+                ],
+            },
+        ),
+    ).subscribe(
+        on_next=lambda uow: collected.append(uow)
+    )
+
+    expect([uow['copy'] for uow in collected]).to(equal([1, 2]))
+
+
+def test_split_without_split_on_returns_source():
+    collected = []
+
+    source = from_list([ # pylint: disable=E1102
+        {
+            'thing': {
+                'id': 1,
+            },
+        },
+    ])
+    source.pipe(
+        split_object({}),
+    ).subscribe(
+        on_next=lambda uow: collected.append(uow)
+    )
+
+    expect(collected).to(equal([
+        {
+            'thing': {
+                'id': 1,
+            },
+        },
+    ]))

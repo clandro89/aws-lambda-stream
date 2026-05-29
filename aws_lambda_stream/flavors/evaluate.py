@@ -1,10 +1,11 @@
 from functools import reduce
-from reactivex import Observable
+from reactivex import Observable, operators as ops
 from pydash import get, pick, omit, merge, sort_by
 from aws_lambda_stream.utils.faults import faulty
 from aws_lambda_stream.utils.filters import on_event_type, on_content
 from aws_lambda_stream.utils.dynamodb import query_dynamodb
 from aws_lambda_stream.utils.operators import rx_filter, rx_map, split_buffer
+from aws_lambda_stream.utils.print import print_end_pipeline, print_start_pipeline
 
 
 def evaluate(rule):
@@ -29,6 +30,7 @@ def evaluate(rule):
             rx_filter(_for_events),
             rx_map(_normalize),
             rx_filter(on_event_type(rule)),
+            ops.do_action(print_start_pipeline(rule)),
             rx_filter(on_content(rule)),
             _complex(rule),
             rx_map(_to_higher_order_events(rule)),
@@ -41,6 +43,7 @@ def evaluate(rule):
                     ]),
                     'event_field': 'emit'
                 }),
+            ops.do_action(print_end_pipeline(rule)),
         )
     return wrapper
 

@@ -1,5 +1,26 @@
 
 
+import logging
+import os
+
+
+def configure_logger(logger):
+    if not isinstance(logger, logging.Logger):
+        return logger
+
+    level_name = os.getenv('LOG_LEVEL', 'INFO').upper()
+    logger.setLevel(getattr(logging, level_name, logging.INFO))
+
+    if not logger.handlers and not isinstance(logger, logging.RootLogger):
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s %(name)s %(message)s'
+        ))
+        logger.addHandler(handler)
+
+    return logger
+
+
 def print_start_pipeline(uow):
     print_start(uow['debug'])(uow)
 

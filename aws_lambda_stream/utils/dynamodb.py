@@ -82,20 +82,35 @@ def pk_condition(field_name = 'pk'):
 def update_dynamodb(
     table_name=os.getenv('ENTITY_TABLE_NAME') or os.getenv('EVENT_TABLE_NAME'),
     update_request_field='update_request',
+    update_response_field='update_response',
+    fallback_update_request_field='fallback_update_request',
 ):
     connector = Connector(table_name)
     def wrapper(uow):
-        return {
-            **uow,
-            'update_response': connector.update(
+        if not uow.get(update_request_field):
+            return uow
+        update_response = connector.update(
+            json.loads(
+                json.dumps(
+                    uow[update_request_field],
+                    cls=JSONEncoder
+                ),
+                parse_float=Decimal
+            )
+        )
+        if update_response == {} and uow.get(fallback_update_request_field):
+            update_response = connector.update(
                 json.loads(
                     json.dumps(
-                        uow[update_request_field],
+                        uow[fallback_update_request_field],
                         cls=JSONEncoder
                     ),
                     parse_float=Decimal
                 )
             )
+        return {
+            **uow,
+            update_response_field: update_response
         }
     return faulty(wrapper)
 
@@ -130,7 +145,7 @@ def batch_get_dynamodb( # pylint: disable=W0102
     connector = Connector(table_name, retry_config)
 
     def invoke(uow):
-        if not batch_get_request_field in uow:
+        if not uow.get(batch_get_request_field):
             return uow
         return {
             **uow,

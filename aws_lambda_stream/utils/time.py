@@ -6,7 +6,7 @@ def now():
     return int(time.time() * 1000)
 
 def ttl(start, days):
-    return int(start/1000) + (60*60*24*days)
+    return int(start/1000) + (60*60*24*int(days))
 
 def ttl_rule(rule, uow):
     if callable(rule.get('ttl')):

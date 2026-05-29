@@ -20,11 +20,11 @@ class Connector():
             **input_params
         }
 
-        self.client.send_message(**params)
+        return self.client.send_message(**params)
 
     def send_message_batch(self, input_params):
         params = {
             'QueueUrl': self.queue_url,
             **input_params
         }
-        self.client.send_message_batch(**params)
+        return self.client.send_message_batch(**params)

@@ -1,13 +1,22 @@
+import os
 import requests
 from pydash import omit_by
 
 
 class Connector():
 
-    def __init__(self, host: str, region: str, aws_session) -> None:
+    def __init__(self, host: str, region: str = os.getenv('REGION'), aws_session = None) -> None:
         self.host = host
         self.region = region
-        self.aws_session = aws_session
+        self._aws_session = aws_session
+        self.awsauth = None
+
+    @property
+    def aws_session(self):
+        if not self._aws_session:
+            import boto3
+            self._aws_session = boto3.Session()
+        return self._aws_session
 
     @property
     def auth(self):
