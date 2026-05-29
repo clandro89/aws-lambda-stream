@@ -799,25 +799,6 @@ sls create \
   --path myprefix-event-hub
 ```
 
-## Development
-
-Run tests:
-
-```bash
-poetry run pytest
-```
-
-Build:
-
-```bash
-poetry build
-```
-
-Publish:
-
-```bash
-poetry publish
-```
 
 ## Credits
 
